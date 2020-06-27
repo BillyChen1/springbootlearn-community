@@ -1,5 +1,6 @@
 package cn.billychen.community.controller;
 
+import cn.billychen.community.dto.PaginationDTO;
 import cn.billychen.community.dto.QuestionDTO;
 import cn.billychen.community.mapper.QuestionMapper;
 import cn.billychen.community.mapper.UserMapper;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -24,9 +26,12 @@ public class IndexController {
     @Autowired
     private QuestionService questionService;
 
+    //page页码 size一页的问题记录数
     @GetMapping("/")
     public String index(HttpServletRequest request,
-                        Model model) {
+                        Model model,
+                        @RequestParam(name = "page",defaultValue = "1") int page,
+                        @RequestParam(name = "size",defaultValue = "5") int size) {
 
         Cookie[] cookies = request.getCookies();
 
@@ -46,9 +51,9 @@ public class IndexController {
             }
         }
 
-        //显示问题列表
-        List<QuestionDTO> questionList = questionService.list();
-        model.addAttribute("questions", questionList);
+        //显示该页信息
+        PaginationDTO pagination = questionService.list(page, size);
+        model.addAttribute("pagination", pagination);
         return "index";
     }
 }
