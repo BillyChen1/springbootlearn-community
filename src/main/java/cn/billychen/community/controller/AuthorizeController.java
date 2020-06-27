@@ -4,7 +4,7 @@ import cn.billychen.community.dto.AccessTokenDTO;
 import cn.billychen.community.dto.GithubUser;
 import cn.billychen.community.mapper.UserMapper;
 import cn.billychen.community.provider.GithubProvider;
-import model.User;
+import cn.billychen.community.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -55,6 +55,7 @@ public class AuthorizeController {
             user.setAccountId(String.valueOf(githubUser.getId()));
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
+            user.setAvatarUrl(githubUser.getAvatar_url());
             //登陆成功，将User对象写入数据库
             userMapper.insert(user);
             //为客户端写cookie
