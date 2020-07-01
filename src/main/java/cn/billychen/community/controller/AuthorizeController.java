@@ -5,6 +5,7 @@ import cn.billychen.community.dto.GithubUser;
 import cn.billychen.community.mapper.UserMapper;
 import cn.billychen.community.provider.GithubProvider;
 import cn.billychen.community.model.User;
+import cn.billychen.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -29,8 +30,9 @@ public class AuthorizeController {
     @Value("${github.redirect.uri}")
     private String redirectUri;
 
+
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
 
 
     @GetMapping("/callback")
@@ -53,11 +55,9 @@ public class AuthorizeController {
             user.setToken(token);
             user.setName(githubUser.getName());
             user.setAccountId(String.valueOf(githubUser.getId()));
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
             user.setAvatarUrl(githubUser.getAvatar_url());
-            //登陆成功，将User对象写入数据库
-            userMapper.insert(user);
+            //登陆成功，将User对象写入数据库(或者仅修改token等信息)
+            userService.createOrUpdate(user);
             //为客户端写cookie
             response.addCookie(new Cookie("token", token));
             return "redirect:/";
@@ -65,5 +65,17 @@ public class AuthorizeController {
             //登陆失败 重新登陆
             return "redirect:/";
         }
+    }
+
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest request,
+                         HttpServletResponse response)
+    {   //清除session
+        request.getSession().removeAttribute("user");
+        //移除客户端cookie
+        Cookie cookie = new Cookie("token", null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "redirect:/";
     }
 }
