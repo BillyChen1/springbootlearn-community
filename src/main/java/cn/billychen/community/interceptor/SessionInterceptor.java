@@ -2,6 +2,7 @@ package cn.billychen.community.interceptor;
 
 import cn.billychen.community.mapper.UserMapper;
 import cn.billychen.community.model.User;
+import cn.billychen.community.model.UserExample;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Service
 public class SessionInterceptor implements HandlerInterceptor {
@@ -26,10 +28,13 @@ public class SessionInterceptor implements HandlerInterceptor {
                     //查询数据库中是否有对应token的用户信息，如果有，则是登陆状态
                     //如果没有，则不是登陆状态
                     String token = cookie.getValue();
-                    User user = userMapper.findByToken(token);
-                    if (user != null) {
+                    UserExample userExample = new UserExample();
+                    userExample.createCriteria()
+                            .andTokenEqualTo(token);
+                    List<User> users = userMapper.selectByExample(userExample);
+                    if (!users.isEmpty()) {
                         //设置session
-                        request.getSession().setAttribute("user", user);
+                        request.getSession().setAttribute("user", users.get(0));
                     }
                     break;
                 }

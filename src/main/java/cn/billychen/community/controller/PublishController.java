@@ -1,7 +1,6 @@
 package cn.billychen.community.controller;
 
 import cn.billychen.community.dto.QuestionDTO;
-import cn.billychen.community.mapper.QuestionMapper;
 import cn.billychen.community.model.Question;
 import cn.billychen.community.model.User;
 import cn.billychen.community.service.QuestionService;

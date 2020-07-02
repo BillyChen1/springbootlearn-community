@@ -2,9 +2,8 @@ package cn.billychen.community.controller;
 
 import cn.billychen.community.dto.AccessTokenDTO;
 import cn.billychen.community.dto.GithubUser;
-import cn.billychen.community.mapper.UserMapper;
-import cn.billychen.community.provider.GithubProvider;
 import cn.billychen.community.model.User;
+import cn.billychen.community.provider.GithubProvider;
 import cn.billychen.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

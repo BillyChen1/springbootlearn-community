@@ -1,10 +1,8 @@
 package cn.billychen.community.dto;
 
-import cn.billychen.community.model.Question;
 import lombok.Data;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 //用于把当前页的信息展示在主页,包括该页的问题、底部显示的页码
