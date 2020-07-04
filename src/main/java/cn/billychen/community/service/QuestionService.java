@@ -4,6 +4,7 @@ import cn.billychen.community.dto.PaginationDTO;
 import cn.billychen.community.dto.QuestionDTO;
 import cn.billychen.community.exception.CustomizeErrorCode;
 import cn.billychen.community.exception.CustomizeException;
+import cn.billychen.community.mapper.QuestionExtMapper;
 import cn.billychen.community.mapper.QuestionMapper;
 import cn.billychen.community.mapper.UserMapper;
 import cn.billychen.community.model.Question;
@@ -27,6 +28,8 @@ public class QuestionService {
 
     @Autowired
     private QuestionMapper questionMapper;
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
     @Autowired
     private UserMapper userMapper;
 
@@ -102,6 +105,9 @@ public class QuestionService {
             //创建
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
+            question.setCommentCount(0);
+            question.setViewCount(0);
+            question.setLikeCount(0);
             questionMapper.insert(question);
         } else {
             //更新
@@ -121,5 +127,13 @@ public class QuestionService {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
         }
+    }
+
+    public void incView(Integer id) {
+        Question question = new Question();
+        question.setId(id);
+        //设置增量为1
+        question.setViewCount(1);
+        questionExtMapper.incView(question);
     }
 }
