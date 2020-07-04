@@ -2,6 +2,8 @@ package cn.billychen.community.service;
 
 import cn.billychen.community.dto.PaginationDTO;
 import cn.billychen.community.dto.QuestionDTO;
+import cn.billychen.community.exception.CustomizeErrorCode;
+import cn.billychen.community.exception.CustomizeException;
 import cn.billychen.community.mapper.QuestionMapper;
 import cn.billychen.community.mapper.UserMapper;
 import cn.billychen.community.model.Question;
@@ -84,6 +86,9 @@ public class QuestionService {
 
     public QuestionDTO getById(Integer id) {
         Question question = questionMapper.selectByPrimaryKey(id);
+        if (question == null) {
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+        }
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question, questionDTO);
         User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -110,7 +115,11 @@ public class QuestionService {
             QuestionExample example = new QuestionExample();
             example.createCriteria()
                     .andIdEqualTo(question.getId());
-            questionMapper.updateByExampleSelective(updateQuestion, example);
+            //这一步更新问题时，有可能更新问题在数据库中不存在，会抛出异常
+            int updated = questionMapper.updateByExampleSelective(updateQuestion, example);
+            if (updated != 1) {
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
         }
     }
 }
