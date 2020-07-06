@@ -1,9 +1,8 @@
 package cn.billychen.community.controller;
 
-import cn.billychen.community.dto.CommentDTO;
+import cn.billychen.community.dto.CommentCreateDTO;
 import cn.billychen.community.dto.ResultDTO;
 import cn.billychen.community.exception.CustomizeErrorCode;
-import cn.billychen.community.mapper.CommentMapper;
 import cn.billychen.community.model.Comment;
 import cn.billychen.community.model.User;
 import cn.billychen.community.service.CommentService;
@@ -24,18 +23,21 @@ public class CommentController {
 
     @ResponseBody
     @RequestMapping(value = "/comment", method = RequestMethod.POST)
-    public Object post(@RequestBody CommentDTO commentDTO,
+    public Object post(@RequestBody CommentCreateDTO commentCreateDTO,
                        HttpServletRequest request) {
         //从session中拿当前登录用户
         User user = (User) request.getSession().getAttribute("user");
         if (user == null) {
             return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }
+        if (commentCreateDTO == null || commentCreateDTO.getContent() == null || "".equals(commentCreateDTO.getContent())) {
+            return ResultDTO.errorOf(CustomizeErrorCode.CONTENT_IS_EMPTY);
+        }
         Comment comment = new Comment();
 
-        comment.setParentId(commentDTO.getParentId());
-        comment.setContent(commentDTO.getContent());
-        comment.setType(commentDTO.getType());
+        comment.setParentId(commentCreateDTO.getParentId());
+        comment.setContent(commentCreateDTO.getContent());
+        comment.setType(commentCreateDTO.getType());
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setGmtModified(comment.getGmtCreate());
         comment.setCommentator(user.getId());
