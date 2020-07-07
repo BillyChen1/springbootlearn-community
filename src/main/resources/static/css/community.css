@@ -64,8 +64,25 @@ body {
     color: #2a6496;
 }
 
+.menu .active {
+    color: #2a6496;
+}
+
 .comments {
     margin-bottom: 15px;
     border-bottom: solid 1px #eee;
     padding-bottom: 6px;
 }
+
+.sub-comments {
+    margin-top: 15px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.sub-comments .btn {
+    margin: 10px 0;
+}
+

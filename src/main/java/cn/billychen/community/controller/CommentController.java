@@ -1,19 +1,19 @@
 package cn.billychen.community.controller;
 
 import cn.billychen.community.dto.CommentCreateDTO;
+import cn.billychen.community.dto.CommentDTO;
 import cn.billychen.community.dto.ResultDTO;
+import cn.billychen.community.enums.CommentTypeEnum;
 import cn.billychen.community.exception.CustomizeErrorCode;
 import cn.billychen.community.model.Comment;
 import cn.billychen.community.model.User;
 import cn.billychen.community.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 public class CommentController {
@@ -44,5 +44,13 @@ public class CommentController {
         comment.setLikeCount(0);
         commentService.insert(comment);
         return ResultDTO.okOf();
+    }
+
+    //获取二级评论列表的接口
+    @ResponseBody
+    @RequestMapping(value = "/comment/{id}", method = RequestMethod.GET)
+    public ResultDTO<List<CommentDTO>> comments(@PathVariable(name = "id") Integer id) {
+        List<CommentDTO> commentDTOS = commentService.listByQuestionOrCommentId(id, CommentTypeEnum.COMMENT);
+        return ResultDTO.okOf(commentDTOS);
     }
 }

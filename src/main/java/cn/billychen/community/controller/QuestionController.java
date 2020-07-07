@@ -2,6 +2,7 @@ package cn.billychen.community.controller;
 
 import cn.billychen.community.dto.CommentDTO;
 import cn.billychen.community.dto.QuestionDTO;
+import cn.billychen.community.enums.CommentTypeEnum;
 import cn.billychen.community.service.CommentService;
 import cn.billychen.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class QuestionController {
         questionService.incView(id);
         model.addAttribute("question", questionDTO);
         //获取回复列表
-        List<CommentDTO> comments = commentService.listByQuestionId(id);
+        List<CommentDTO> comments = commentService.listByQuestionOrCommentId(id, CommentTypeEnum.QUESTION);
         model.addAttribute("comments", comments);
 
         return "question";
