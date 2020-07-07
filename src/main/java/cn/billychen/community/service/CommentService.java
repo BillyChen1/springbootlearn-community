@@ -4,10 +4,7 @@ import cn.billychen.community.dto.CommentDTO;
 import cn.billychen.community.enums.CommentTypeEnum;
 import cn.billychen.community.exception.CustomizeErrorCode;
 import cn.billychen.community.exception.CustomizeException;
-import cn.billychen.community.mapper.CommentMapper;
-import cn.billychen.community.mapper.QuestionExtMapper;
-import cn.billychen.community.mapper.QuestionMapper;
-import cn.billychen.community.mapper.UserMapper;
+import cn.billychen.community.mapper.*;
 import cn.billychen.community.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +27,8 @@ public class CommentService {
     private QuestionExtMapper questionExtMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private CommentExtMapper commentExtMapper;
 
     //评论插入数据库和问题回复数增加一是一个事务
     @Transactional
@@ -50,6 +49,9 @@ public class CommentService {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
             commentMapper.insert(comment);
+            //还需要增加回复的回复数
+            dbComment.setCommentCount(1);
+            commentExtMapper.incComment(dbComment);
         } else {
             //该评论是对问题的回复
             Question dbQuestion = questionMapper.selectByPrimaryKey(comment.getParentId());
