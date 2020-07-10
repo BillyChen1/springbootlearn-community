@@ -3,6 +3,7 @@ package cn.billychen.community.controller;
 import cn.billychen.community.dto.CommentDTO;
 import cn.billychen.community.dto.QuestionDTO;
 import cn.billychen.community.enums.CommentTypeEnum;
+import cn.billychen.community.model.Question;
 import cn.billychen.community.service.CommentService;
 import cn.billychen.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class QuestionController {
         //获取回复列表
         List<CommentDTO> comments = commentService.listByQuestionOrCommentId(id, CommentTypeEnum.QUESTION);
         model.addAttribute("comments", comments);
+        //获取与该问题的相关问题
+        List<QuestionDTO> relatedQuestions = questionService.selectRelated(questionDTO);
+        model.addAttribute("relatedQuestions", relatedQuestions);
 
         return "question";
     }

@@ -1,5 +1,6 @@
 package cn.billychen.community.controller;
 
+import cn.billychen.community.cache.TagCache;
 import cn.billychen.community.dto.QuestionDTO;
 import cn.billychen.community.model.Question;
 import cn.billychen.community.model.User;
@@ -30,12 +31,15 @@ public class PublishController {
         //让客户端知道是通过/publish/id这种方式进入问题编辑页面的，即这是一个旧的问题
         //将通过表单绑定的方式传给前端
         model.addAttribute("id", question.getId());
+        //将标签信息传给前端
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 
 
     @GetMapping("/publish")
-    public String publish() {
+    public String publish(Model model) {
+        model.addAttribute("tags", TagCache.get());
         return "publish";
     }
 
@@ -59,6 +63,7 @@ public class PublishController {
             model.addAttribute("error", "标签不能为空");
             return "publish";
         }
+        model.addAttribute("tags", TagCache.get());
 
 
         Question question = new Question();

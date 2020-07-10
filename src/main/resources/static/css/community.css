@@ -86,3 +86,30 @@ body {
     margin: 10px 0;
 }
 
+.sp-top
+{
+    margin-top: 10px;
+}
+
+.sp-bottom {
+    margin-bottom: 10px;
+}
+
+.qustion-tag {
+    margin-right: 5px;
+}
+
+.question-related {
+    list-style: none;
+    padding-left: 0;
+}
+
+.publish-tag-tab {
+    display: none;
+    margin-top: 10px;
+}
+
+.label-info {
+    margin-right: 10px;
+}
+

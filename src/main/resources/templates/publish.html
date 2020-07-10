@@ -2,12 +2,13 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>社区 - 发布</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/community.css">
     <script src="/js/jquery-3.5.1.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/community.js"></script>
 </head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
@@ -20,15 +21,36 @@
                 <input type="hidden" th:value="${id}" name="id">
                 <div class="form-group">
                     <label for="title">问题标题</label>
-                    <input type="text" class="form-control" th:value="${title}" id="title" name="title" placeholder="问题标题...">
+                    <input type="text" class="form-control" th:value="${title}" id="title" name="title"
+                           placeholder="问题标题...">
                 </div>
                 <div class="form-group">
                     <label for="description">问题补充（必填，请按照右侧提示）</label>
-                    <textarea name="description" id="description" cols="30" rows="10" class="form-control" th:text="${description}"></textarea>
+                    <textarea name="description" id="description" cols="30" rows="10" class="form-control"
+                              th:text="${description}"></textarea>
                 </div>
                 <div class="form-group">
                     <label for="tag">添加标签</label>
-                    <input type="text" class="form-control" th:value="${tag}" id="tag" name="tag" placeholder="输入标签，以，分割">
+                    <input type="text" class="form-control" th:value="${tag}" id="tag" name="tag"
+                           placeholder="输入标签，以,分割" onclick="showSelectTag()">
+                    <div id="selectTag" class="publish-tag-tab">
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" th:each="selectCategory:${tags}">
+                                <a th:href="${'#'+selectCategory.categoryName}" aria-controls="home" role="tab"
+                                    data-toggle="tab" th:text="${selectCategory.categoryName}"></a>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active"  th:id="${selectCategory.categoryName}"
+                                 th:each="selectCategory:${tags}">
+                                <span class="label label-info" th:each="selectTag:${selectCategory.tags}"><span
+                                        class="glyphicon glyphicon-tags"
+                                        onclick="selectTag(this)" th:data-tag="${selectTag}" th:text="${selectTag}"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div th:if="${error} != null">

@@ -11,6 +11,7 @@ import cn.billychen.community.model.Question;
 import cn.billychen.community.model.QuestionExample;
 import cn.billychen.community.model.User;
 import cn.billychen.community.model.UserExample;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 //初始service层
 //需求：根据question对象中的creator去查找user表得到头像
@@ -36,7 +38,9 @@ public class QuestionService {
     public PaginationDTO list(Integer page, Integer size) {
         //表示数据库记录的偏移起始点，即该页的第一条记录编号
         int offset = size * (page - 1);
-        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(new QuestionExample(), new RowBounds(offset, size));
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.setOrderByClause("gmt_create desc");
+        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
         List<QuestionDTO>  questionDTOList = new ArrayList<>();
         PaginationDTO paginationDTO = new PaginationDTO();
 
@@ -135,5 +139,22 @@ public class QuestionService {
         //设置增量为1
         question.setViewCount(1);
         questionExtMapper.incView(question);
+    }
+
+    public List<QuestionDTO> selectRelated(QuestionDTO questionDTO) {
+        if (StringUtils.isBlank(questionDTO.getTag())) {
+            return new ArrayList<>();
+        }
+        String regexTag = StringUtils.replace(questionDTO.getTag(), ",", "|");
+        Question question = new Question();
+        question.setId(questionDTO.getId());
+        question.setTag(regexTag);
+        List<Question> questions = questionExtMapper.selectRelated(question);
+        List<QuestionDTO> questionDTOs = questions.stream().map(q -> {
+            QuestionDTO questionDTO1 = new QuestionDTO();
+            BeanUtils.copyProperties(q, questionDTO1);
+            return questionDTO1;
+        }).collect(Collectors.toList());
+        return questionDTOs;
     }
 }
