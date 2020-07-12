@@ -7,8 +7,8 @@ import java.util.List;
 
 //用于把当前页的信息展示在主页,包括该页的问题、底部显示的页码
 @Data
-public class PaginationDTO {
-    private List<QuestionDTO> questions;
+public class PaginationDTO <T> {
+    private List<T> data;
     private boolean showPrevious;
     private boolean showFirst;
     private boolean showNext;

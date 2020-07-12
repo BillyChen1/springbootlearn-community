@@ -42,7 +42,7 @@ public class QuestionService {
         questionExample.setOrderByClause("gmt_create desc");
         List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
         List<QuestionDTO>  questionDTOList = new ArrayList<>();
-        PaginationDTO paginationDTO = new PaginationDTO();
+        PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
 
         for (Question question : questionList) {
             User user = userMapper.selectByPrimaryKey(question.getCreator());
@@ -52,7 +52,7 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
         //将该页的问题列表放入页信息对象中
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
         //拿到问题的总数
         Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());
         //在PaginationDTO类的逻辑中设置一些其他的信息
@@ -78,7 +78,7 @@ public class QuestionService {
             questionDTOList.add(questionDTO);
         }
         //将该页的问题列表放入页信息对象中
-        paginationDTO.setQuestions(questionDTOList);
+        paginationDTO.setData(questionDTOList);
         //拿到某用户发布的问题的总数
         QuestionExample questionExample1 = new QuestionExample();
         questionExample1.createCriteria()

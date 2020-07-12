@@ -3,6 +3,7 @@ package cn.billychen.community.interceptor;
 import cn.billychen.community.mapper.UserMapper;
 import cn.billychen.community.model.User;
 import cn.billychen.community.model.UserExample;
+import cn.billychen.community.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -18,6 +19,8 @@ public class SessionInterceptor implements HandlerInterceptor {
 
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private NotificationService notificationService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -35,6 +38,9 @@ public class SessionInterceptor implements HandlerInterceptor {
                     if (!users.isEmpty()) {
                         //设置session
                         request.getSession().setAttribute("user", users.get(0));
+                        //将未读消息数也放入
+                        Long unreadCount = notificationService.unreadCount(users.get(0).getId());
+                        request.getSession().setAttribute("unreadCount", unreadCount);
                     }
                     break;
                 }
