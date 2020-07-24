@@ -2,6 +2,7 @@ package cn.billychen.community.service;
 
 import cn.billychen.community.dto.PaginationDTO;
 import cn.billychen.community.dto.QuestionDTO;
+import cn.billychen.community.dto.QuestionQueryDTO;
 import cn.billychen.community.exception.CustomizeErrorCode;
 import cn.billychen.community.exception.CustomizeException;
 import cn.billychen.community.mapper.QuestionExtMapper;
@@ -35,12 +36,25 @@ public class QuestionService {
     @Autowired
     private UserMapper userMapper;
 
-    public PaginationDTO list(Integer page, Integer size) {
+    public PaginationDTO list(String search, Integer page, Integer size) {
+        if (StringUtils.isNotBlank(search)) {
+            String regex = StringUtils.replace(search, " ", "|");
+            search = regex;
+        } else {
+            search = null;
+        }
+
+
+        QuestionQueryDTO questionQueryDTO = new QuestionQueryDTO();
+        questionQueryDTO.setSearch(search);
+        questionQueryDTO.setPage(page);
+        questionQueryDTO.setSize(size);
+
         //表示数据库记录的偏移起始点，即该页的第一条记录编号
         int offset = size * (page - 1);
-        QuestionExample questionExample = new QuestionExample();
-        questionExample.setOrderByClause("gmt_create desc");
-        List<Question> questionList = questionMapper.selectByExampleWithRowbounds(questionExample, new RowBounds(offset, size));
+        questionQueryDTO.setPage(offset);
+        questionQueryDTO.setSize(size);
+        List<Question> questionList = questionExtMapper.selectBySearch(questionQueryDTO);
         List<QuestionDTO>  questionDTOList = new ArrayList<>();
         PaginationDTO<QuestionDTO> paginationDTO = new PaginationDTO<>();
 
@@ -54,7 +68,7 @@ public class QuestionService {
         //将该页的问题列表放入页信息对象中
         paginationDTO.setData(questionDTOList);
         //拿到问题的总数
-        Integer totalCount = (int)questionMapper.countByExample(new QuestionExample());
+        Integer totalCount = questionExtMapper.countBySearch(questionQueryDTO);
         //在PaginationDTO类的逻辑中设置一些其他的信息
         paginationDTO.setPagination(totalCount, page, size);
 

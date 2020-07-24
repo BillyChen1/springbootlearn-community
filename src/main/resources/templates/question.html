@@ -6,10 +6,14 @@
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/bootstrap-theme.min.css">
     <link rel="stylesheet" href="/css/community.css">
+    <link rel="stylesheet" href="/css/editormd.preview.min.css">
     <script src="/js/jquery-3.5.1.js"></script>
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/community.js" type="application/javascript"></script>
     <script src="/js/moment.js"></script>
+    <script src="/js/editormd.min.js"></script>
+    <script src="/js/lib/marked.min.js"></script>
+    <script src="/js/lib/prettify.min.js"></script>
 </head>
 <body>
 <div th:insert="~{navigation :: nav}"></div>
@@ -25,7 +29,16 @@
                 阅读数：<span th:text="${question.viewCount}"></span>
             </span>
                 <hr>
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:text="${question.description}"></div>
+                <!--问题描述-->
+                <div id="question-view">
+                    <textarea style="display:none;" th:text="${question.description}"></textarea>
+                </div>
+                <script type="text/javascript">
+                    $(function() {
+                        var testView = editormd.markdownToHTML("question-view", {
+                        });
+                    });
+                </script>
                 <br>
                 <hr class="sp-bottom">
                 <span class="label label-info qustion-tag" th:each="tag : ${question.tag.split(',')}">
@@ -91,15 +104,15 @@
             <!--回复框-->
             <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12" id="comment_section">
 
-                <div class="media">
+                <div class="media" th:if="${session.user != null}">
                     <div class="media-left">
                         <a href="#">
-                            <img class="media-object img-circle" th:src="${question.user.avatarUrl}">
+                            <img class="media-object img-circle" th:src="${session.user.avatarUrl}">
                         </a>
                     </div>
                     <div class="media-body">
                         <h4 class="media-heading">
-                            <span th:text="${question.user.name}"></span>
+                            <span th:text="${session.user.name}"></span>
                         </h4>
                     </div>
                 </div>
