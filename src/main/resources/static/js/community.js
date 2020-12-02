@@ -6,8 +6,9 @@ function post() {
 
 }
 
-function comment() {
-    var commentId = $("#comment_id").val();
+function comment(e) {
+    var commentId = $(e).parent().children("#comment_id").val();
+    // var commentId = $("#comment_id").val();
     var content = $("#input-" + commentId).val();
     comment2target(commentId, 2, content);
 }
